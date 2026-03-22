@@ -110,23 +110,10 @@ setup_systemd() {
 
     SERVICE_FILE="/etc/systemd/system/sznuper.service"
 
+    SERVICE_URL="https://raw.githubusercontent.com/sznuper/dist/main/systemd/sznuper.service"
+
     info "Installing systemd service..."
-    cat > "$SERVICE_FILE" <<'EOF'
-[Unit]
-Description=sznuper server monitor
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=simple
-ExecStart=/usr/local/bin/sznuper start
-EnvironmentFile=-/etc/sznuper/.env
-Restart=on-failure
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target
-EOF
+    curl -fsSL -o "$SERVICE_FILE" "$SERVICE_URL"
 
     systemctl daemon-reload
 

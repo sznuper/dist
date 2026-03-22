@@ -10,16 +10,7 @@ on:
         required: true
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Check systemd service matches install.sh heredoc
-        run: ./dev/check-service-inline.sh
-
   install:
-    needs: lint
     runs-on: ubuntu-latest
     strategy:
       matrix:
