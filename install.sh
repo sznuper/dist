@@ -54,6 +54,7 @@ detect_install_paths() {
 
 download_binary() {
     need curl
+    need tar
 
     if [ -n "${VERSION:-}" ]; then
         TAG="$VERSION"
@@ -67,16 +68,16 @@ download_binary() {
         fi
     fi
 
-    ASSET="${BINARY_NAME}-linux-${ARCH}"
+    ASSET="${BINARY_NAME}_linux_${ARCH}.tar.gz"
     URL="https://github.com/$REPO/releases/download/$TAG/$ASSET"
 
     info "Downloading $BINARY_NAME $TAG ($ARCH)..."
     mkdir -p "$BIN_DIR"
-    TMP_BIN=$(mktemp "$BIN_DIR/$BINARY_NAME.XXXXXX")
-    trap 'rm -f "$TMP_BIN"' EXIT
-    curl -fsSL -o "$TMP_BIN" "$URL"
-    chmod +x "$TMP_BIN"
-    mv -f "$TMP_BIN" "$BIN_DIR/$BINARY_NAME"
+    TMP_DIR=$(mktemp -d)
+    trap 'rm -rf "$TMP_DIR"' EXIT
+    curl -fsSL "$URL" | tar xz -C "$TMP_DIR"
+    chmod +x "$TMP_DIR/$BINARY_NAME"
+    mv -f "$TMP_DIR/$BINARY_NAME" "$BIN_DIR/$BINARY_NAME"
     trap - EXIT
 
     ok "Installed $BIN_DIR/$BINARY_NAME ($TAG)"
